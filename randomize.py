@@ -1,6 +1,6 @@
 import json
-import random
 import os
+import random
 import sys
 
 def read_json_file(file_path, default_content=None):
@@ -18,14 +18,22 @@ def create_template_file(file_path, template_content):
     if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
         write_json_file(file_path, template_content)
 
-def randomizer(options, result_to_avoid, result_description):
+def randomizer(
+    options, result_to_avoid, result_description, total_options, no_repeat):
+
+    position = total_options - len(options) + 1
+    description = result_description.capitalize()
+
     options = [name for name in options if name != result_to_avoid]
     if options:
         random_result = random.choice(options)
-        print(f"{result_description.capitalize()}:\n- {random_result}")
+        print(f"{description}:\n- {random_result}", end="")
+        if no_repeat:
+            print(f" ({position}/{total_options})", end="")
+        print()
         return random_result
     else:
-        print("No valid options to randomize.")
+        print("All options were selected. Let's start next round!")
         return None
 
 def main():
@@ -34,57 +42,66 @@ def main():
         no_repeat = True
 
     last_result_data = read_json_file('lastResult.json', default_content={})
-    list_to_randomize_data = read_json_file('listToRandomize.json', default_content={
-        "result_description": "my next trip will be to",
-        "options": ["Portugal", "Spain", "France", "Italy"]
-    })
+    list_to_randomize_data = read_json_file(
+        'listToRandomize.json', default_content={
+            "result_description": "my next trip will be to",
+            "options": ["Portugal", "Spain", "France", "Italy"]})
 
     options = list_to_randomize_data.get('options', [])
 
+    already_randomized_data = ""
     if no_repeat:
         already_randomized_path = 'alreadyRandomized.json'
 
         if os.path.exists(already_randomized_path):
-            already_randomized_data = read_json_file(already_randomized_path, default_content={
-                "all_options_randomized_count": 0,
-                "already_randomized": []
-            })
+            already_randomized_data = read_json_file(
+                already_randomized_path, default_content={
+                    "all_options_randomized_count": 0,
+                    "already_randomized": []})
         else:
             create_template_file(already_randomized_path, {
                 "all_options_randomized_count": 0,
-                "already_randomized": []
-            })
+                "already_randomized": []})
             already_randomized_data = {
                 "all_options_randomized_count": 0,
-                "already_randomized": []
-            }
+                "already_randomized": []}
 
         if already_randomized_data is not None:
-            all_options_randomized_count = already_randomized_data.get('all_options_randomized_count', 0)
-            already_randomized = already_randomized_data.get('already_randomized', [])
+            all_options_randomized_count = already_randomized_data.get(
+                'all_options_randomized_count', 0)
+            already_randomized = already_randomized_data.get(
+                'already_randomized', [])
 
             if set(already_randomized) == set(options):
                 already_randomized_data['already_randomized'] = []
                 already_randomized_data['all_options_randomized_count'] += 1
-                all_options_randomized_count = already_randomized_data['all_options_randomized_count']
+                all_options_randomized_count = \
+                    already_randomized_data['all_options_randomized_count']
 
-                write_json_file(already_randomized_path, already_randomized_data)
-            
-            print(f"Times the whole list was run: {all_options_randomized_count}\n")
+                write_json_file(
+                    already_randomized_path, already_randomized_data)
 
-    result_description = list_to_randomize_data.get('result_description', None)
+            print(
+                f"Times list was completed: {all_options_randomized_count}\n")
+
+    result_description = list_to_randomize_data.get(
+        'result_description', None)
 
     if result_description is None or not options:
         print("Invalid configuration. Please check 'listToRandomize.json'.")
         return
 
-    last_result = last_result_data.get('last_result')
 
-    result_to_avoid = last_result
+    total_options = len(options)
     if no_repeat and already_randomized_data is not None:
         options = [name for name in options if name not in already_randomized]
 
-    new_result = randomizer(options, result_to_avoid, result_description)
+    last_result = last_result_data.get('last_result')
+    result_to_avoid = last_result
+
+    new_result = randomizer(
+        options, result_to_avoid, result_description,
+        total_options, no_repeat)
 
     if new_result is not None:
         last_result_data['last_result'] = new_result
@@ -98,6 +115,5 @@ if __name__ == "__main__":
     create_template_file('lastResult.json', {})
     create_template_file('listToRandomize.json', {
         "result_description": "my next trip will be to",
-        "options": ["Portugal", "Spain", "France", "Italy"]
-    })
+        "options": ["Portugal", "Spain", "France", "Italy"]})
     main()
