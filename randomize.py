@@ -75,9 +75,8 @@ def main():
 
             actual_options = []
             if already_randomized:
-                i = all_options_randomized_count
-                if already_randomized[i]["selected"]:
-                    actual_options = already_randomized[i]["selected"]
+                if already_randomized[0]["selected"]:
+                    actual_options = already_randomized[0]["selected"]
 
             if set(actual_options) == set(options):
                 already_randomized_data['all_options_randomized_count'] += 1
@@ -113,12 +112,11 @@ def main():
         write_json_file('lastResult.json', last_result_data)
 
     if no_repeat:
-        i = all_options_randomized_count
-        if len(already_randomized) < i + 1:
-            already_randomized_data['already_randomized'].append({
+        if len(already_randomized) < all_options_randomized_count + 1:
+            already_randomized_data['already_randomized'].insert(0, {
                 "datetime": str(dt.now())[0:19],
                 "comments": "", "selected": []})
-        already_randomized_data['already_randomized'][i]["selected"] \
+        already_randomized_data['already_randomized'][0]["selected"] \
             .append(new_result)
 
         write_json_file('alreadyRandomized.json', already_randomized_data)
