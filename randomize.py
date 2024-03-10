@@ -79,15 +79,7 @@ def main():
                     actual_options = already_randomized[0]["selected"]
 
             if set(actual_options) == set(options):
-                already_randomized_data['all_options_randomized_count'] += 1
-                all_options_randomized_count += 1
                 actual_options = []
-
-                write_json_file(
-                    already_randomized_path, already_randomized_data)
-
-            print(
-                f"Times list was completed: {all_options_randomized_count}\n")
 
     result_description = list_to_randomize_data.get(
         'result_description', None)
@@ -118,6 +110,16 @@ def main():
                 "comments": "", "selected": []})
         already_randomized_data['already_randomized'][0]["selected"] \
             .append(new_result)
+        if len(already_randomized_data['already_randomized'][0]["selected"]) \
+            == total_options:
+            already_randomized_data['all_options_randomized_count'] += 1
+            all_options_randomized_count += 1
+
+            write_json_file(
+                already_randomized_path, already_randomized_data)
+            
+        print(
+            f"\nTimes list was completed: {all_options_randomized_count}")
 
         write_json_file('alreadyRandomized.json', already_randomized_data)
 
