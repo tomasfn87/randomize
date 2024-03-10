@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 import json
 import os
 import random
@@ -72,14 +73,19 @@ def main():
             already_randomized = already_randomized_data.get(
                 'already_randomized', [])
 
-            if set(already_randomized) == set(options):
-                already_randomized_data['already_randomized'] = []
-                already_randomized_data['all_options_randomized_count'] += 1
-                all_options_randomized_count = \
-                    already_randomized_data['all_options_randomized_count']
+            actual_options = []
+            if len(already_randomized):
+                i = all_options_randomized_count
+                if len(already_randomized[i]["selected"]):
+                    actual_options = already_randomized[i]["selected"]
 
-                write_json_file(
-                    already_randomized_path, already_randomized_data)
+            if set(actual_options) == set(options):
+                already_randomized_data['all_options_randomized_count'] += 1
+                all_options_randomized_count += 1
+                actual_options = []
+
+            write_json_file(
+                already_randomized_path, already_randomized_data)
 
             print(
                 f"Times list was completed: {all_options_randomized_count}\n")
@@ -91,10 +97,11 @@ def main():
         print("Invalid configuration. Please check 'listToRandomize.json'.")
         return
 
-
     total_options = len(options)
-    if no_repeat and already_randomized_data is not None:
-        options = [name for name in options if name not in already_randomized]
+    if no_repeat and len(actual_options):
+        if len(options) == len(actual_options):
+            return
+        options = [name for name in options if name not in actual_options]
 
     last_result = last_result_data.get('last_result')
     result_to_avoid = last_result
@@ -107,8 +114,14 @@ def main():
         last_result_data['last_result'] = new_result
         write_json_file('lastResult.json', last_result_data)
 
+        i = all_options_randomized_count
         if no_repeat and already_randomized_data is not None:
-            already_randomized_data['already_randomized'].append(new_result)
+            if len(already_randomized) < i + 1:
+                already_randomized_data['already_randomized'].append(
+                    {"datetime": str(dt.now())[0:19], "comments": "", "selected": []})
+            already_randomized_data['already_randomized'][i]["selected"] \
+                .append(new_result)
+
             write_json_file('alreadyRandomized.json', already_randomized_data)
 
 if __name__ == "__main__":
