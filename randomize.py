@@ -74,9 +74,9 @@ def main():
                 'already_randomized', [])
 
             actual_options = []
-            if len(already_randomized):
+            if already_randomized:
                 i = all_options_randomized_count
-                if len(already_randomized[i]["selected"]):
+                if already_randomized[i]["selected"]:
                     actual_options = already_randomized[i]["selected"]
 
             if set(actual_options) == set(options):
@@ -84,8 +84,8 @@ def main():
                 all_options_randomized_count += 1
                 actual_options = []
 
-            write_json_file(
-                already_randomized_path, already_randomized_data)
+                write_json_file(
+                    already_randomized_path, already_randomized_data)
 
             print(
                 f"Times list was completed: {all_options_randomized_count}\n")
@@ -98,9 +98,7 @@ def main():
         return
 
     total_options = len(options)
-    if no_repeat and len(actual_options):
-        if len(options) == len(actual_options):
-            return
+    if no_repeat and actual_options:
         options = [name for name in options if name not in actual_options]
 
     last_result = last_result_data.get('last_result')
@@ -114,15 +112,16 @@ def main():
         last_result_data['last_result'] = new_result
         write_json_file('lastResult.json', last_result_data)
 
+    if no_repeat:
         i = all_options_randomized_count
-        if no_repeat and already_randomized_data is not None:
-            if len(already_randomized) < i + 1:
-                already_randomized_data['already_randomized'].append(
-                    {"datetime": str(dt.now())[0:19], "comments": "", "selected": []})
-            already_randomized_data['already_randomized'][i]["selected"] \
-                .append(new_result)
+        if len(already_randomized) < i + 1:
+            already_randomized_data['already_randomized'].append({
+                "datetime": str(dt.now())[0:19],
+                "comments": "", "selected": []})
+        already_randomized_data['already_randomized'][i]["selected"] \
+            .append(new_result)
 
-            write_json_file('alreadyRandomized.json', already_randomized_data)
+        write_json_file('alreadyRandomized.json', already_randomized_data)
 
 if __name__ == "__main__":
     create_template_file('lastResult.json', {})
