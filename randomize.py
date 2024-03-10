@@ -107,7 +107,7 @@ def main():
         if len(already_randomized) < all_options_randomized_count + 1:
             already_randomized_data['already_randomized'].insert(0, {
                 "datetime": str(dt.now())[0:19],
-                "comments": "", "selected": []})
+                "comments": [], "selected": []})
         already_randomized_data['already_randomized'][0]["selected"] \
             .append(new_result)
         if len(already_randomized_data['already_randomized'][0]["selected"]) \
