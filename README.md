@@ -18,4 +18,5 @@ python3 randomize.py
 python3 randomize.py --no-repeat
 ```
 
-- Running the program with the flag `--no-repeat` will make it avoid all items that were already selected until the whole list is over.
+- Running the program with the flag `--no-repeat` will make it avoid all items that were already selected until the whole list is over;
+- This option will also generate a nice log of the program execution in the file `alreadyRandomized.json`, thus generating an automatic report of an activity or process that needs random sorting to function.
