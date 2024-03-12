@@ -1,8 +1,15 @@
 #!/bin/bash
 
+for file in alreadyRandomized.json lastResult.json listToRandomize.json; do
+  if [ ! -f "$file" ]; then
+    echo "The file $file does not exist. Aborting the script."
+    exit 1
+  fi
+done
+
 if [ $# -eq 0 ]; then
     echo "Wrong input: please specify file name as argument. i.e: ./save_result_as_JSON.sh 'file_name'"
-    exit 1
+    exit 2
 fi
 
 output_file="$1"
@@ -18,11 +25,10 @@ if [ -z "$output_file" ]; then
     echo -n "Wrong input: file name can use only letters, numbers,"
     echo -n " _ and -; empty spaces and dots will be converted to -."
     echo " i.e: ./save_result_as_JSON.sh 'file_name'"
-    exit 2
+    exit 3
 fi
 
 date_time=`date '+%Y-%m-%d_%Hh%Mmin%Ss'`
-script_name=`basename "$0" | cut -d'.' -f1`
 output_file="${date_time}__${output_file}.json"
 
 file_content="["
