@@ -23,12 +23,12 @@ python3 randomize.py --no-repeat
 
 ### Saving the result
 
-- Scripts `save_result_as_JSON.sh` and `save_result_as_TXT.sh` read data from the session JSON files and save it to the corresponding file format, allowing the session data to backed up.
+- Scripts `save_result_as_JSON.sh` and `save_result_as_MD.sh` read data from the session JSON files and save it to the corresponding file format, allowing the session data to backed up.
 
 #### Permissions
 
 ```console
-chmod +x save_result_as_{JSON,TXT}.sh
+chmod +x save_result_as_{JSON,MD}.sh
 ```
 
 - First add execution permission to the scripts.
@@ -41,7 +41,7 @@ chmod +x save_result_as_{JSON,TXT}.sh
 ./save_result_as_JSON.sh 'file_name'
 ```
 
-- If `jq` is installed the result will the printed to the screen;
+- If `jq` is installed the result will be printed to the screen;
 - Install it on `Debian` systems with
 
 ```console
@@ -50,8 +50,8 @@ sudo apt install -y jq
 
 ---
 
-#### As `.txt`
+#### As `.md`
 
 ```
-./save_result_as_TXT.sh 'file_name'
+./save_result_as_MD.sh 'file_name'
 ```
