@@ -21,7 +21,7 @@ python3 randomize.py --no-repeat
 - Running the program with the flag `--no-repeat` will make it avoid all items that were already selected until the whole list is over;
 - This option will also generate a nice log of the program execution in the file `alreadyRandomized.json`, thus generating an automatic report of an activity or process that needs random sorting to function.
 
-### Saving the result
+### How to backup a randomization session's data
 
 - Scripts `save_result_as_JSON.sh` and `save_result_as_MD.sh` read data from the session JSON files and save it to the corresponding file format, allowing the session data to backed up.
 
