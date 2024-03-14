@@ -1,14 +1,16 @@
 #!/bin/bash
 
+source './colorize.sh'
+
 for file in alreadyRandomized.json lastResult.json listToRandomize.json; do
   if [ ! -f "$file" ]; then
-    echo "The file $file does not exist. Aborting the script."
+    echo "`toRed ERROR`: the file `toYellow $file` does not exist. Aborting the script."
     exit 1
   fi
 done
 
 if [ $# -eq 0 ]; then
-    echo "Wrong input: please specify file name as argument. i.e: ./save_result_as_JSON.sh 'file_name'"
+    echo "`toRed ERROR`: wrong input. Please specify file name as argument. i.e: `toYellow ./save_result_as_JSON.sh\ 'file_name'`."
     exit 2
 fi
 
