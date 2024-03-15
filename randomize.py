@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from colorama import Fore, Style
 import json
 import os
 import random
@@ -7,17 +8,48 @@ import sys
 def read_json_file(file_path, default_content=None):
     if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
         return default_content
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding="utf-8") as file:
         data = json.load(file)
     return data
 
 def write_json_file(file_path, data):
     with open(file_path, 'w') as file:
-        json.dump(data, file, indent=2)
+        json.dump(data, file, indent=2, ensure_ascii=False)
 
 def create_template_file(file_path, template_content):
     if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
         write_json_file(file_path, template_content)
+
+def deduplicate(strings):
+    unique_strings = set()
+    deduplicated_list = []
+    for string in strings:
+        normalized_string = ' '.join(string.lower().split())
+        if normalized_string not in unique_strings:
+            deduplicated_list.append(string)
+            unique_strings.add(normalized_string)
+    return deduplicated_list
+
+def print_color(text, color, end="\n"):
+    if not type(text) == str:
+        text = str(text)
+
+    color_map = {
+        'yellow': Fore.YELLOW,
+        'red': Fore.RED,
+        'green': Fore.GREEN,
+        'light blue': Fore.CYAN,}
+
+    if color not in color_map:
+        raise ValueError(
+            "Invalid color. Use 'yellow', 'red', 'green' or 'light blue'.")
+
+    print(color_map[color] + text + Style.RESET_ALL, end=end)
+
+def fix_file(file_name):
+    print("Please edit file", end=" ")
+    print_color(file_name.strip(), "yellow", end=" ")
+    print("before continuing.")
 
 def randomizer(
     options, result_to_avoid, result_description,
@@ -28,7 +60,8 @@ def randomizer(
     options = [name for name in options if name != result_to_avoid]
     if options:
         random_result = random.choice(options)
-        print(f"{description}:\n- {random_result}", end="")
+        print(f"{description}:\n- ",  end="")
+        print_color(random_result, "light blue", end="")
         if no_repeat:
             print(f" ({position}/{total_options})", end="")
         print()
@@ -50,6 +83,24 @@ def main():
             "options": ["Portugal", "Spain", "France", "Italy"]})
 
     options = list_to_randomize_data.get('options', [])
+    check_options = deduplicate(options)
+
+    if len(check_options) < len(options):
+        print_color("ERROR", "red", end="")
+        print(": duplicated options were detected.")
+        fix_file("listToRandomize.json")
+        return
+
+    if len(options) < 2:
+        print_color("ERROR", "red", end="")
+        if len(options) == 1:
+            print(": the only option is:", end=" ")
+            print_color(options[0], "light blue", end="")
+            print(".")
+        else:
+            print(f": no options were defined.")
+        fix_file("listToRandomize.json")
+        return
 
     already_randomized_data = ""
     if no_repeat:
@@ -100,7 +151,6 @@ def main():
     last_result = last_result_data.get('last_result')
     result_to_avoid = last_result
 
-
     position = 0
     if no_repeat:
         position = len(
@@ -126,7 +176,14 @@ def main():
                 already_randomized_path, already_randomized_data)
 
         print(
-            f"\nTimes list was completed: {all_options_randomized_count}")
+            f"\nTimes list was completed: ", end="")
+        if all_options_randomized_count == 0:
+            print_color(all_options_randomized_count, "red")
+        else:
+            if all_options_randomized_count % 2 == 0:
+                print_color(all_options_randomized_count, "yellow")
+            else:
+                print_color(all_options_randomized_count, "green")
 
         write_json_file('alreadyRandomized.json', already_randomized_data)
 
