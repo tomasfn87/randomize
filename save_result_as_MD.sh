@@ -19,6 +19,7 @@ output_file=`echo "$output_file" | tr -cd '[:alnum:] _\-.'`
 output_file=`echo "$output_file" | sed 's/ \{1,\}/-/g'`
 output_file=`echo "$output_file" | sed 's/\.\{1,\}/-/g'`
 output_file=`echo "$output_file" | sed 's/\-\{2,\}/-/g'`
+output_file=`echo "$output_file" | sed 's/_\{2,\}/_/g'`
 output_file=`echo "$output_file" | sed 's/^ *//g' | sed 's/ *$//g'`
 output_file=`echo "$output_file" | sed 's/ /-/g'`
 output_file=`echo "$output_file" | sed 's/\./-/g'`
