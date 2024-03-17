@@ -49,13 +49,14 @@ def print_color(text, color, end="\n"):
         text = str(text)
 
     color_map = {
-        "dim": Style.DIM,
-        "yellow": Fore.YELLOW,
-        "red": Fore.LIGHTRED_EX,
-        "light blue": Fore.LIGHTBLUE_EX,
+        "dim"         : Style.DIM,
+        "green"       : Fore.GREEN,
+        "red"         : Fore.LIGHTRED_EX,
+        "yellow"      : Fore.YELLOW,
+        "light blue"  : Fore.LIGHTBLUE_EX,
         "light yellow": Fore.LIGHTYELLOW_EX,
-        "light green": Fore.LIGHTGREEN_EX,
-        "light cyan": Fore.LIGHTCYAN_EX}
+        "light green" : Fore.LIGHTGREEN_EX,
+        "light cyan"  : Fore.LIGHTCYAN_EX}
 
     if color not in color_map:
         err = "Invalid color. Use "
@@ -80,7 +81,10 @@ def randomizer(
         random_result = random.choice(options)
         print(f"{description}:\n- ",  end="")
         if no_repeat and position == total_options:
-            print_color(random_result.strip(), "light green", end="")
+            if cycle_count % 2 == 0:
+                print_color(random_result.strip(), "light green", end="")
+            else:
+                print_color(random_result.strip(), "green", end="")
         elif cycle_count % 2 != 0:
             print_color(random_result.strip(), "light blue", end="")
         else:
@@ -216,7 +220,7 @@ def main():
                 already_randomized_path, already_randomized_data)
 
         print_color(
-            "\nTimes list was completed:", "dim", end=" ")
+            "Times list was completed:", "dim", end=" ")
         if all_options_randomized_count == 0:
             print_color(all_options_randomized_count, "red")
         else:
