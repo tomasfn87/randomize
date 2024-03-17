@@ -52,6 +52,7 @@ def print_color(text, color, end="\n"):
         "dim": Style.DIM,
         "yellow": Fore.YELLOW,
         "red": Fore.LIGHTRED_EX,
+        "light blue": Fore.LIGHTBLUE_EX,
         "light yellow": Fore.LIGHTYELLOW_EX,
         "light green": Fore.LIGHTGREEN_EX,
         "light cyan": Fore.LIGHTCYAN_EX}
@@ -70,7 +71,7 @@ def fix_file(file_name):
 
 def randomizer(
     options, result_to_avoid, result_description,
-    total_options, position, no_repeat):
+    total_options, position, no_repeat, cycle_count):
 
     description = result_description.capitalize()
 
@@ -80,6 +81,8 @@ def randomizer(
         print(f"{description}:\n- ",  end="")
         if no_repeat and position == total_options:
             print_color(random_result.strip(), "light green", end="")
+        elif cycle_count % 2 != 0:
+            print_color(random_result.strip(), "light blue", end="")
         else:
             print_color(random_result.strip(), "light cyan", end="")
         if no_repeat:
@@ -194,7 +197,8 @@ def main():
         result_description = result_description,
         total_options      = total_options,
         position           = position,
-        no_repeat          = no_repeat)
+        no_repeat          = no_repeat,
+        cycle_count        = all_options_randomized_count)
 
     if new_result is not None:
         last_result_data["last_result"] = new_result
