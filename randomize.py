@@ -85,10 +85,10 @@ def randomizer(
                 print_color(random_result.strip(), "light green", end="")
             else:
                 print_color(random_result.strip(), "green", end="")
-        elif cycle_count % 2 != 0:
-            print_color(random_result.strip(), "light blue", end="")
-        else:
+        elif cycle_count % 2 == 0:
             print_color(random_result.strip(), "light cyan", end="")
+        else:
+            print_color(random_result.strip(), "light blue", end="")
         if no_repeat:
             print(" (", end="")
             if position == total_options:
@@ -110,7 +110,7 @@ def randomizer(
 
 def main():
     no_repeat = False
-    if len(sys.argv) >= 2 and sys.argv[1].lower() == '--no-repeat':
+    if len(sys.argv) >= 2 and sys.argv[1].lower() == "--no-repeat":
         no_repeat = True
 
     last_result_data = read_json_file("lastResult.json", default_content={})
@@ -122,7 +122,7 @@ def main():
     result_description = list_to_randomize_data.get(
         "result_description", "")
 
-    options = list_to_randomize_data.get('options', [])
+    options = list_to_randomize_data.get("options", [])
     check_options = deduplicate(options)
 
     if len(check_options) < len(options):
@@ -135,7 +135,7 @@ def main():
         print_color("ERROR", "red", end="")
         if len(options) == 1:
             print(": the only option is:", end=" ")
-            print_color(options[0], "yellow", end="")
+            print_color(options[0], "light yellow", end="")
             print(".")
         else:
             print(": no options were defined.")
