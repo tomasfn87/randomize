@@ -166,23 +166,24 @@ def main():
                 "all_options_randomized_count": 0,
                 "already_randomized": []}
 
-        if already_randomized_data is not None:
-            all_options_randomized_count = already_randomized_data.get(
-                "all_options_randomized_count", 0)
-            already_randomized = already_randomized_data.get(
-                "already_randomized", [])
-
-            actual_options = []
-            if already_randomized and already_randomized[0]["selected"]:
-                    actual_options = already_randomized[0]["selected"]
-
-            if len(actual_options) >= len(options):
-                actual_options = []
+        all_options_randomized_count = already_randomized_data.get(
+            "all_options_randomized_count", 0)
+        already_randomized = already_randomized_data.get(
+            "already_randomized", [])
 
         if len(already_randomized) < all_options_randomized_count + 1:
             already_randomized_data["already_randomized"].insert(0, {
                 "datetime": str(dt.now())[0:19],
                 "comments": [], "selected": []})
+
+        results = already_randomized[0]["selected"]
+
+        actual_options = []
+        if already_randomized and results:
+            actual_options = results
+
+        if len(actual_options) >= len(options):
+            actual_options = []
 
     total_options = len(options)
     if no_repeat and actual_options:
@@ -192,8 +193,7 @@ def main():
 
     position = 0
     if no_repeat:
-        position = len(
-            already_randomized_data["already_randomized"][0]["selected"]) + 1
+        position = len(results) + 1
 
     new_result = randomizer(
         options            = options,
@@ -209,18 +209,13 @@ def main():
         write_json_file("lastResult.json", last_result_data)
 
     if no_repeat:
-        already_randomized_data["already_randomized"][0]["selected"] \
-            .append(new_result)
-        if len(already_randomized_data["already_randomized"][0]["selected"]) \
-            >= total_options:
-            already_randomized_data["all_options_randomized_count"] = \
-                len(already_randomized_data["already_randomized"])
-            all_options_randomized_count += 1
-            write_json_file(
-                already_randomized_path, already_randomized_data)
+        results.append(new_result)
 
-        print_color(
-            "Times list was completed:", "dim", end=" ")
+        if len(results) >= total_options:
+            already_randomized_data["all_options_randomized_count"] += 1
+            all_options_randomized_count += 1
+
+        print_color("Times list was completed:", "dim", end=" ")
         if all_options_randomized_count == 0:
             print_color(all_options_randomized_count, "red")
         else:
@@ -229,7 +224,7 @@ def main():
             else:
                 print_color(all_options_randomized_count, "light green")
 
-        write_json_file("alreadyRandomized.json", already_randomized_data)
+        write_json_file(already_randomized_path, already_randomized_data)
 
 if __name__ == "__main__":
     create_template_file("lastResult.json", {})
