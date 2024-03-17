@@ -92,12 +92,18 @@ def randomizer(
         if no_repeat:
             print(" (", end="")
             if position == total_options:
-                print_color(position, "light green", end="")
+                if cycle_count % 2 == 0:
+                    print_color(position, "light green", end="")
+                else:
+                    print_color(position, "green", end="")
             else:
                 print_color(position, "yellow", end="")
             print("/", end="")
             if position == total_options:
-                print_color(total_options, "light green", end="")
+                if cycle_count % 2 == 0:
+                    print_color(total_options, "light green", end="")
+                else:
+                    print_color(total_options, "green", end="")
             else:
                 print_color(total_options, "light yellow", end="")
             print(")", end="")
@@ -144,12 +150,12 @@ def main():
 
     if not result_description:
         print_color("ERROR", "red", end="")
-        print(": invalid result description. Please check file ", end="")
-        print_color("listToRandomize.json", "yellow", end="")
-        print(".")
+        print(": invalid result description.")
+        fix_file("listToRandomize.json")
         return
 
     already_randomized_data = ""
+    all_options_randomized_count = 0
     if no_repeat:
         already_randomized_path = "alreadyRandomized.json"
 
