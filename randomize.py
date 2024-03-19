@@ -49,14 +49,14 @@ def print_color(text, color, end="\n"):
         text = str(text)
 
     color_map = {
-        "dim"         : Style.DIM,
-        "green"       : Fore.GREEN,
-        "red"         : Fore.LIGHTRED_EX,
-        "yellow"      : Fore.YELLOW,
-        "light blue"  : Fore.LIGHTBLUE_EX,
-        "light yellow": Fore.LIGHTYELLOW_EX,
-        "light green" : Fore.LIGHTGREEN_EX,
-        "light cyan"  : Fore.LIGHTCYAN_EX}
+        "dim"          : Style.DIM,
+        "light magenta": Fore.LIGHTMAGENTA_EX,
+        "red"          : Fore.LIGHTRED_EX,
+        "yellow"       : Fore.YELLOW,
+        "light blue"   : Fore.LIGHTBLUE_EX,
+        "light yellow" : Fore.LIGHTYELLOW_EX,
+        "light green"  : Fore.LIGHTGREEN_EX,
+        "light cyan"   : Fore.LIGHTCYAN_EX}
 
     if color not in color_map:
         err = "Invalid color. Use "
@@ -84,7 +84,7 @@ def randomizer(
             if cycle_count % 2 == 0:
                 print_color(random_result.strip(), "light green", end="")
             else:
-                print_color(random_result.strip(), "green", end="")
+                print_color(random_result.strip(), "light magenta", end="")
         elif cycle_count % 2 == 0:
             print_color(random_result.strip(), "light cyan", end="")
         else:
@@ -95,7 +95,7 @@ def randomizer(
                 if cycle_count % 2 == 0:
                     print_color(position, "light green", end="")
                 else:
-                    print_color(position, "green", end="")
+                    print_color(position, "light magenta", end="")
             else:
                 print_color(position, "yellow", end="")
             print("/", end="")
@@ -103,7 +103,7 @@ def randomizer(
                 if cycle_count % 2 == 0:
                     print_color(total_options, "light green", end="")
                 else:
-                    print_color(total_options, "green", end="")
+                    print_color(total_options, "light magenta", end="")
             else:
                 print_color(total_options, "light yellow", end="")
             print(")", end="")
