@@ -115,7 +115,7 @@ def randomizer(
 
 def main():
     no_repeat = False
-    if len(sys.argv) >= 2 and sys.argv[1].lower() == "--no-repeat":
+    if "--no-repeat" in [arg.lower() for arg in sys.argv]:
         no_repeat = True
 
     last_result_data = read_json_file("lastResult.json", default_content={})
@@ -236,4 +236,19 @@ if __name__ == "__main__":
     create_template_file("listToRandomize.json", {
         "result_description": "my next trip will be to",
         "options": ["Portugal", "Spain", "France", "Italy"]})
-    main()
+    if "--loop" in [arg.lower() for arg in sys.argv]:
+        flag_index = [arg.lower() for arg in sys.argv].index("--loop")
+        value_index = flag_index + 1
+
+        if value_index < len(sys.argv):
+            value = sys.argv[value_index]
+        else:
+            raise ValueError("No value provided after the '--loop' flag.")
+
+        if value.isdigit():
+            for i in range(int(value)):
+                main()
+        else:
+            raise ValueError("No valid integer value for the '--loop' flag.")
+    else:
+        main()
