@@ -12,6 +12,14 @@ python3 randomize.py
 - 2. Edit `listToRandomize.json` with the result description and the data you need to randomize;
 - 3. Run the command above again and the result will be printed to the screen.
 
+### `--loop` option
+
+```console
+python3 randomize.py --loop 3
+```
+
+- The `--loop n` flag allows the program to be executed `n` times (`n` must be an integer).
+
 ### `--no-repeat` option
 
 ```console
