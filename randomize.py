@@ -149,7 +149,7 @@ def main():
         fix_file("listToRandomize.json")
         return
 
-    if not result_description:
+    if not result_description.strip():
         print_color("ERROR", "red", end="")
         print(": invalid result description.")
         fix_file("listToRandomize.json")
