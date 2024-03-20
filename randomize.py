@@ -49,15 +49,16 @@ def print_color(text, color, end="\n"):
         text = str(text)
 
     color_map = {
-        "dim"          : Style.DIM,
-        "red"          : Fore.LIGHTRED_EX,
-        "yellow"       : Fore.YELLOW,
-        "light blue"   : Fore.LIGHTBLUE_EX,
-        "light yellow" : Fore.LIGHTYELLOW_EX,
-        "light green"  : Fore.LIGHTGREEN_EX,
-        "light cyan"   : Fore.LIGHTCYAN_EX}
+        "dim"         : Style.DIM,
+        "red"         : Fore.LIGHTRED_EX,
+        "yellow"      : Fore.YELLOW,
+        "light blue"  : Fore.LIGHTBLUE_EX,
+        "light yellow": Fore.LIGHTYELLOW_EX,
+        "light green" : Fore.LIGHTGREEN_EX,
+        "light cyan"  : Fore.LIGHTCYAN_EX}
 
     if color not in color_map:
+        print_color("ERROR", "red")
         err = "Invalid color. Use "
         err += join_text(list(color_map.keys()), " or ") + "."
         raise ValueError(err)
@@ -243,12 +244,14 @@ if __name__ == "__main__":
         if value_index < len(sys.argv):
             value = sys.argv[value_index]
         else:
-            raise ValueError("No value provided after the '--loop' flag.")
+            print_color("ERROR", "red")
+            raise ValueError(": no value provided after the '--loop' flag.")
 
         if value.isdigit():
             for i in range(int(value)):
                 main()
         else:
+            print_color("ERROR", "red")
             raise ValueError("No valid integer value for the '--loop' flag.")
     else:
         main()
