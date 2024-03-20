@@ -50,12 +50,11 @@ def print_color(text, color, end="\n"):
 
     color_map = {
         "dim"          : Style.DIM,
-        "red"          : Fore.RED,
+        "red"          : Fore.LIGHTRED_EX,
         "yellow"       : Fore.YELLOW,
         "light blue"   : Fore.LIGHTBLUE_EX,
         "light yellow" : Fore.LIGHTYELLOW_EX,
         "light green"  : Fore.LIGHTGREEN_EX,
-        "light red"    : Fore.LIGHTRED_EX,
         "light cyan"   : Fore.LIGHTCYAN_EX}
 
     if color not in color_map:
@@ -97,7 +96,7 @@ def randomizer(
                 else:
                     print_color(position, "light yellow", end="")
             else:
-                print_color(position, "red", end="")
+                print_color(position, "dim", end="")
             print("/", end="")
             if position == total_options:
                 if cycle_count % 2 == 0:
@@ -105,7 +104,7 @@ def randomizer(
                 else:
                     print_color(total_options, "light yellow", end="")
             else:
-                print_color(total_options, "light red", end="")
+                print(total_options, end="")
             print(")", end="")
         print()
         if random_result is not None:
