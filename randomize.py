@@ -129,9 +129,8 @@ def main():
         "result_description", "")
 
     options = list_to_randomize_data.get("options", [])
-    check_options = deduplicate(options)
 
-    if len(check_options) < len(options):
+    if len(deduplicate(options)) < len(options):
         print_color("ERROR", "red", end="")
         print(": duplicated options were detected.")
         fix_file("listToRandomize.json")
@@ -141,7 +140,7 @@ def main():
         print_color("ERROR", "red", end="")
         if len(options) == 1:
             print(": the only option is:", end=" ")
-            print_color(options[0], "light yellow", end="")
+            print_color(options[0].strip(), "light yellow", end="")
             print(".")
         else:
             print(": no options were defined.")
