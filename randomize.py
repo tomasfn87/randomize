@@ -1,126 +1,69 @@
-from colorama import Fore, Style
 from datetime import datetime as dt
-import json
+from tools.color import print_color
+from tools.file_tools import FileTools
+from tools.string_tools import StringTools
 import os
 import random
-import re
 import sys
 
-def read_json_file(file_path, default_content=None):
-    if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
-        return default_content
-    with open(file_path, "r", encoding="utf-8") as file:
-        data = json.load(file)
-    return data
+class Random:
+    def __init__(self, result_description, options, last_result):
+        self.result_description = result_description or ""
+        self.options = options or []
+        self.last_result = last_result or ""
 
-def write_json_file(file_path, data):
-    with open(file_path, "w") as file:
-        json.dump(data, file, indent=2, ensure_ascii=False)
+    def randomizer(self, total_options, position, no_repeat, cycle_count):
 
-def create_template_file(file_path, template_content):
-    if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
-        write_json_file(file_path, template_content)
+        description = self.result_description.capitalize()
 
-def deduplicate(strings):
-    unique_strings = set()
-    deduplicated_list = []
-    for string in strings:
-        normalized_string = re.sub(
-            r"[^a-zA-Z0-9À-ÿ]", "", " ".join(string.lower().split()))
-        if normalized_string not in unique_strings:
-            deduplicated_list.append(string)
-            unique_strings.add(normalized_string)
-    return deduplicated_list
-
-def join_text(item_list, separator_1=" and ", separator_2=", "):
-    assert isinstance(separator_1, str) and isinstance(separator_2, str)
-    text = ""
-    for i in range(0, len(item_list)):
-        text += str(item_list[i])
-        if i == len(item_list) - 1:
-            return text
-        elif i == len(item_list) - 2:
-            text += separator_1
-        else:
-            text += separator_2
-
-def print_color(text, color, end="\n"):
-    if not type(text) == str:
-        text = str(text)
-
-    color_map = {
-        "dim"         : Style.DIM,
-        "red"         : Fore.LIGHTRED_EX,
-        "yellow"      : Fore.YELLOW,
-        "light blue"  : Fore.LIGHTBLUE_EX,
-        "light yellow": Fore.LIGHTYELLOW_EX,
-        "light green" : Fore.LIGHTGREEN_EX,
-        "light cyan"  : Fore.LIGHTCYAN_EX}
-
-    if color not in color_map:
-        print_color("ERROR", "red")
-        err = "Invalid color. Use "
-        err += join_text(list(color_map.keys()), " or ") + "."
-        raise ValueError(err)
-
-    print(color_map[color] + text + Style.RESET_ALL, end=end)
-
-def fix_file(file_name):
-    print("Please edit file", end=" ")
-    print_color(file_name.strip(), "yellow", end=" ")
-    print("before continuing.")
-
-def randomizer(
-    options, result_to_avoid, result_description,
-    total_options, position, no_repeat, cycle_count):
-
-    description = result_description.capitalize()
-
-    options = [name for name in options if name != result_to_avoid]
-    if options:
-        random_result = random.choice(options)
-        print(f"{description}:\n- ",  end="")
-        if no_repeat and position == total_options:
-            if cycle_count % 2 == 0:
-                print_color(random_result.strip(), "light green", end="")
-            else:
-                print_color(random_result.strip(), "light yellow", end="")
-        elif cycle_count % 2 == 0:
-            print_color(random_result.strip(), "light cyan", end="")
-        else:
-            print_color(random_result.strip(), "light blue", end="")
-        if no_repeat:
-            print(" (", end="")
-            if position == total_options:
+        options = [name for name in self.options if name != self.last_result]
+        if options:
+            random_result = random.choice(options)
+            print(f"{description}:\n- ",  end="")
+            if no_repeat and position == total_options:
                 if cycle_count % 2 == 0:
-                    print_color(position, "light green", end="")
+                    print_color(random_result.strip(), "light green", end="")
                 else:
-                    print_color(position, "light yellow", end="")
+                    print_color(random_result.strip(), "light yellow", end="")
+            elif cycle_count % 2 == 0:
+                print_color(
+                    random_result.strip(), "light cyan", end="")
             else:
-                print_color(position, "dim", end="")
-            print("/", end="")
-            if position == total_options:
-                if cycle_count % 2 == 0:
-                    print_color(total_options, "light green", end="")
+                print_color(
+                    random_result.strip(), "light blue", end="")
+            if no_repeat:
+                print(" (", end="")
+                if position == total_options:
+                    if cycle_count % 2 == 0:
+                        print_color(position, "light green", end="")
+                    else:
+                        print_color(position, "light yellow", end="")
                 else:
-                    print_color(total_options, "light yellow", end="")
-            else:
-                print(total_options, end="")
-            print(")", end="")
-        print()
-        if random_result is not None:
-            return random_result
-    else:
-        print("All options were selected. Let's start next round!")
-        return None
+                    print_color(position, "dim", end="")
+                print("/", end="")
+                if position == total_options:
+                    if cycle_count % 2 == 0:
+                        print_color(total_options, "light green", end="")
+                    else:
+                        print_color(total_options, "light yellow", end="")
+                else:
+                    print(total_options, end="")
+                print(")", end="")
+            print()
+            if random_result is not None:
+                return random_result
+        else:
+            print("All options were selected. Let's start next round!")
+            return None
 
 def main():
     no_repeat = False
     if "--no-repeat" in [arg.lower() for arg in sys.argv]:
         no_repeat = True
 
-    last_result_data = read_json_file("lastResult.json", default_content={})
-    list_to_randomize_data = read_json_file(
+    last_result_data = FileTools.read_json_file(
+        "lastResult.json", default_content={})
+    list_to_randomize_data = FileTools.read_json_file(
         "listToRandomize.json", default_content={
             "result_description": "my next trip will be to",
             "options": ["Portugal", "Spain", "France", "Italy"]})
@@ -130,10 +73,10 @@ def main():
 
     options = list_to_randomize_data.get("options", [])
 
-    if len(deduplicate(options)) < len(options):
+    if len(StringTools.deduplicate(options)) < len(options):
         print_color("ERROR", "red", end="")
         print(": duplicated options were detected.")
-        fix_file("listToRandomize.json")
+        FileTools.fix_file("listToRandomize.json")
         return
 
     if len(options) < 2:
@@ -144,13 +87,13 @@ def main():
             print(".")
         else:
             print(": no options were defined.")
-        fix_file("listToRandomize.json")
+        FileTools.fix_file("listToRandomize.json")
         return
 
     if not result_description.strip():
         print_color("ERROR", "red", end="")
         print(": invalid result description.")
-        fix_file("listToRandomize.json")
+        FileTools.fix_file("listToRandomize.json")
         return
 
     already_randomized_data = ""
@@ -159,12 +102,12 @@ def main():
         already_randomized_path = "alreadyRandomized.json"
 
         if os.path.exists(already_randomized_path):
-            already_randomized_data = read_json_file(
+            already_randomized_data = FileTools.read_json_file(
                 already_randomized_path, default_content={
                     "all_options_randomized_count": 0,
                     "already_randomized": []})
         else:
-            create_template_file(already_randomized_path, {
+            FileTools.create_template_file(already_randomized_path, {
                 "all_options_randomized_count": 0,
                 "already_randomized": []})
             already_randomized_data = {
@@ -200,18 +143,16 @@ def main():
     if no_repeat:
         position = len(results) + 1
 
-    new_result = randomizer(
-        options            = options,
-        result_to_avoid    = last_result,
-        result_description = result_description,
-        total_options      = total_options,
-        position           = position,
-        no_repeat          = no_repeat,
-        cycle_count        = all_options_randomized_count)
+    r = Random(result_description, options, last_result)
+    new_result = r.randomizer(
+        total_options  = total_options,
+        position       = position,
+        no_repeat      = no_repeat,
+        cycle_count    = all_options_randomized_count)
 
     if new_result is not None:
         last_result_data["last_result"] = new_result
-        write_json_file("lastResult.json", last_result_data)
+        FileTools.write_json_file("lastResult.json", last_result_data)
 
     if no_repeat:
         results.append(new_result)
@@ -229,28 +170,27 @@ def main():
             else:
                 print_color(all_options_randomized_count, "light green")
 
-        write_json_file(already_randomized_path, already_randomized_data)
+        FileTools.write_json_file(already_randomized_path, already_randomized_data)
 
 if __name__ == "__main__":
-    create_template_file("lastResult.json", {})
-    create_template_file("listToRandomize.json", {
+    FileTools.create_template_file("lastResult.json", {})
+    FileTools.create_template_file("listToRandomize.json", {
         "result_description": "my next trip will be to",
         "options": ["Portugal", "Spain", "France", "Italy"]})
     if "--loop" in [arg.lower() for arg in sys.argv]:
         flag_index = [arg.lower() for arg in sys.argv].index("--loop")
         value_index = flag_index + 1
-
         if value_index < len(sys.argv):
             value = sys.argv[value_index]
         else:
             print_color("ERROR", "red")
-            raise ValueError(": no value provided after the '--loop' flag.")
+            raise ValueError("no value provided after the '--loop' flag.")
 
         if value.isdigit():
             for i in range(int(value)):
                 main()
         else:
             print_color("ERROR", "red")
-            raise ValueError("No valid integer value for the '--loop' flag.")
+            raise ValueError("no valid integer value for the '--loop' flag.")
     else:
         main()
