@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source './colorize.sh'
+source './tools/colorize.sh'
 
 for file in alreadyRandomized.json lastResult.json listToRandomize.json; do
   if [ ! -f "$file" ]; then
