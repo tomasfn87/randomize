@@ -9,7 +9,7 @@ class Random:
 
     def randomizer(self, total_options, position, no_repeat, cycle_count):
 
-        description = self.result_description.capitalize()
+        description = self.result_description
 
         options = [name for name in self.options if name != self.last_result]
         if options:
